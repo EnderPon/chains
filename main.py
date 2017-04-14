@@ -32,7 +32,7 @@ class Chain:
         next_ = []
         weights = []
         if prev not in self.list:
-            prev = "Лев"
+            prev = "Я"
             #print(self.list.items())
             #prev = choice(self.list.items()[0])
             #print(prev)
@@ -85,7 +85,7 @@ def main():
     chain = Chain()
     chain.teaching_file_words("9HW.txt")
 
-    last = "Я"
+    last = "я"
     out = ""
     for i in range(1000):
         new = chain.next(last)
