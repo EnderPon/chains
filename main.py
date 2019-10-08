@@ -1,8 +1,10 @@
-from numpy.random import choice as choice
+from random import choices as choice
 
 
 class Chain:
     def __init__(self):
+        # self.punctuation = [".", ",", "!", "?", ":", ";", "'", '"', "(", ")", "-", "–", "\n"]
+        self.punctuation = ["\n"]
         self.need_update = False  # показатель, что были изменения с момента последнего пересчёта весов
         self.list = {}
         return
@@ -32,14 +34,14 @@ class Chain:
         next_ = []
         weights = []
         if prev not in self.list:
-            prev = "Я"
+            prev = "\n"
             #print(self.list.items())
             #prev = choice(self.list.items()[0])
             #print(prev)
         for rule in self.list[prev]["rules"]:
             next_.append(rule)
             weights.append(self.list[prev]["rules"][rule]["weight"])
-        return(choice(next_, p=weights))
+        return choice(population=next_, weights=weights, k=1)[0]
 
     def teaching_file_letters(self, filename, letters):
         with open(filename, "r") as text:
@@ -53,7 +55,6 @@ class Chain:
 
     def teaching_file_words(self, filename):
         with open(filename, "r") as text:
-            punctuation = [".", ",", "!", "?", ":", ";", "'", '"', "(", ")", "-", "–"]
             prev_word = ""
             word = ""
             count = 0
@@ -62,15 +63,13 @@ class Chain:
                 letter = text.read(1)
                 if letter == "":
                     break
-                if letter in punctuation and False:  # пока пусть знаки будут словом
-                    continue
-                    # Это была попытка считать знак препинания словом
+                if letter in self.punctuation:
                     self.add_rule(prev_word, word)
                     prev_word = word
                     self.add_rule(prev_word, letter)
                     prev_word = letter
                     word = ""
-                if letter == " ":
+                elif letter == " ":
                     self.add_rule(prev_word, word)
                     prev_word = word
                     word = ""
@@ -80,16 +79,15 @@ class Chain:
     def print(self):
         print(self.list)
 
-
 def main():
     chain = Chain()
-    chain.teaching_file_words("9HW.txt")
+    chain.teaching_file_words("in")
 
-    last = "я"
+    last = "\n"
     out = ""
     for i in range(1000):
         new = chain.next(last)
-        out += new + " "
+        out += ("" if new in chain.punctuation else " ") + new
         last = new
     print(out)
 
